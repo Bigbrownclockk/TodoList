@@ -5,7 +5,7 @@
 
 // Database connection
 
-$conn = new mysqli('localhost','root','','todo_db');
+$conn = new mysqli('localhost', 'root', '', 'todo_db');
 
 // Check connection
 

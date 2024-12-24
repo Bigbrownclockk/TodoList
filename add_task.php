@@ -1,10 +1,17 @@
 <?php
 // add_task.php
 
-
+function getConnection()
+{
+    $conn = new mysqli('localhost', 'root', '', 'todo_db');
+    if ($conn->connect_error) {
+        die(json_encode(['success' => false, 'error' => 'Database connection failed']));
+    }
+    return $conn;
+}
 // Database connection
 
-$conn = new mysqli('localhost', 'root','','todo_db');
+$conn = getConnection();
 
 // Check connection
 
