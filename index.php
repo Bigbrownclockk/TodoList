@@ -1,36 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Linking external CSS and JS files -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List with Progress Bar</title>
-    <style>
-        /* General Body Styling */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            color: #333;
-            height: 100vh; /* Full height */
-            overflow: hidden;
-        }
-
-        /* Dynamic Background with Gradient */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, #8375ff 0%, #ffa8d4 50%, rgba(255, 255, 255, 0.8) 100%);
-            z-index: -2;
-            animation: gradientShift 10s ease infinite;
-        }
-
-        /* Larger Waves at Bottom */
-        /* Wave Container */
-        .waves {
+    <link rel="stylesheet" href="styles.css">
             position: fixed;
             bottom: 0;
             left: 0;
@@ -188,85 +163,6 @@
         <path fill="#ffffff" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,218.7C384,213,480,171,576,154.7C672,139,768,149,864,176C960,203,1056,245,1152,245.3C1248,245,1344,203,1392,181.3L1440,160L1440,320L0,320Z"></path>
     </svg>
 </div>
-<script>
-    // Your existing JavaScript functionality remains unchanged
-    document.getElementById('taskForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const taskInput = document.getElementById('taskInput');
-        const taskText = taskInput.value.trim();
-
-        if (taskText) {
-            const ul = document.getElementById('taskList');
-            const li = document.createElement('li');
-            const span = document.createElement('span');
-            span.textContent = taskText;
-
-            const buttonsContainer = document.createElement('div');
-            buttonsContainer.className = 'task-buttons';
-
-            const completeButton = document.createElement('button');
-            completeButton.textContent = 'Complete';
-            completeButton.className = 'complete-button';
-            completeButton.addEventListener('click', function () {
-                li.classList.toggle('completed');
-                updateProgressBar();
-            });
-
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.className = 'delete-button';
-            deleteButton.addEventListener('click', function () {
-                li.remove();
-                showEmptyState();
-                updateProgressBar();
-            });
-
-            buttonsContainer.appendChild(completeButton);
-            buttonsContainer.appendChild(deleteButton);
-            li.appendChild(span);
-            li.appendChild(buttonsContainer);
-            ul.appendChild(li);
-
-            taskInput.value = '';
-            showEmptyState();
-            updateProgressBar();
-        } else {
-            alert('Task cannot be empty!');
-        }
-    });
-
-    function showEmptyState() {
-        const taskList = document.getElementById('taskList');
-        const emptyState = document.getElementById('emptyState');
-        if (!taskList.children.length && !emptyState) {
-            const li = document.createElement('li');
-            li.id = 'emptyState';
-            li.textContent = 'No tasks yet! 🎉 Start by adding a task above.';
-            li.style.textAlign = 'center';
-            taskList.appendChild(li);
-        } else if (taskList.children.length && emptyState) {
-            emptyState.remove();
-        }
-    }
-
-    function updateProgressBar() {
-        const tasks = document.querySelectorAll('#taskList li');
-        const completedTasks = document.querySelectorAll('#taskList li.completed');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-
-        const totalTasks = tasks.length;
-        const completedCount = completedTasks.length;
-        const progress = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
-
-        progressBar.style.width = progress + '%';
-        progressText.textContent = `${progress}% completed`;
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        showEmptyState();
-        updateProgressBar();
-    });
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
