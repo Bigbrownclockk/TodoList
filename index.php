@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: user_login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,5 +70,5 @@
 <script src="script.js">
 
 </script>
-</body>
+<a href="user_logout.php" class="logout-button">Logout</a></body>
 </html>

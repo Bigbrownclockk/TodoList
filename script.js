@@ -5,11 +5,26 @@ document.getElementById('taskForm').addEventListener('submit', function (e) {
     const taskText = taskInput.value.trim();
 
     if (taskText) {
-        // Add task to the central task list
-        addTaskToMainList(taskText);
-
-        // Add task to the "Ongoing Tasks" tab
-        addTaskToSidebar('ongoing-tasks', taskText);
+        // Send the task to the server
+        fetch('add_task.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ task: taskText }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add task to the local task list only if the server request was successful
+                    addTaskToMainList(taskText);
+                    addTaskToSidebar('ongoing-tasks', taskText);
+                    updateProgressBar();
+                } else {
+                    console.error('Error adding task:', data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
 
         // Clear the input field
         taskInput.value = '';
@@ -17,6 +32,66 @@ document.getElementById('taskForm').addEventListener('submit', function (e) {
         alert('Task cannot be empty!');
     }
 });
+// Fetch and load tasks from the server
+function fetchTasks() {
+    fetch('fetch_tasks.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear existing tasks in the DOM
+                const taskList = document.getElementById('taskList');
+                taskList.innerHTML = '';
+
+                const ongoingTasks = document.getElementById('ongoing-tasks');
+                ongoingTasks.innerHTML = '';
+
+                const completedTasks = document.getElementById('completed-tasks');
+                completedTasks.innerHTML = '';
+
+                // Add tasks to the DOM
+                data.tasks.forEach(task => {
+                    // Add to the main list
+                    addTaskToMainList(task.task);
+
+                    // Add to the correct tab
+                    if (task.completed) {
+                        addTaskToSidebar('completed-tasks', task.task);
+                    } else {
+                        addTaskToSidebar('ongoing-tasks', task.task);
+                    }
+                });
+
+                // Update the progress bar
+                updateProgressBar();
+            } else {
+                console.error(data.error);
+            }
+        })
+        .catch(error => console.error('Error fetching tasks:', error));
+}
+document.addEventListener('DOMContentLoaded', fetchTasks);
+
+function displayTasks(tasks) {
+    const ongoingTasks = document.getElementById('ongoing-tasks');
+    const completedTasks = document.getElementById('completed-tasks');
+
+    ongoingTasks.innerHTML = ''; // Clear the list
+    completedTasks.innerHTML = ''; // Clear the list
+
+    tasks.forEach((task) => {
+        const li = document.createElement('li');
+        li.textContent = task.task; // Add the task description
+
+        if (task.completed === "1") {
+            li.classList.add('completed');
+            completedTasks.appendChild(li); // Add to the completed tasks list
+        } else {
+            ongoingTasks.appendChild(li); // Add to the ongoing tasks list
+        }
+    });
+}
+// Call fetchTasks to load tasks when the page loads
+document.addEventListener('DOMContentLoaded', fetchTasks);
 function addTaskToMainList(taskText) {
     const ul = document.getElementById('taskList');
     const li = document.createElement('li');
